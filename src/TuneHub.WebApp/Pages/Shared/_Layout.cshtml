@@ -35,8 +35,16 @@
                     <li><a asp-page="/Contact">Contact</a></li>
                 </ul>
 
+                
                 <ul class="nav navbar-nav pull-right">
-                    <li><a asp-page="/Login">Login</a></li>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li><a>Hello @User.Identity.Name!</a></li>
+                    }
+                    else
+                    {
+                        <li><a href="~/login">Login with Spotify</a></li>
+                    }
                 </ul>
             </div>
         </div>
