@@ -1,0 +1,25 @@
+@page
+@model TuneHub.WebApp.Pages.ProfileModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<table class="table table-striped">
+    <tr>
+        <th>Name</th>
+        <th>Owner</th>
+        <th class="text-right">No. of Tracks</th>
+        <th>Is Public</th>
+        <th>Is Collaborative</th>
+        <th>Is Owned</th>
+    </tr>
+    @foreach (var item in Model.Playlists)
+    {
+        <tr>
+            <td>@item.Name</td>
+            <td>@item.Owner</td>
+            <td>@item.NumberOfTracks</td>
+            <td>@item.IsPublic</td>
+            <td>@item.IsCollaborative</td>
+            <td>@item.IsOwned</td>
+        </tr>
+    }
+</table>
