@@ -39,6 +39,7 @@ namespace TuneHub.WebApp
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.AddTuneHubServices();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
@@ -46,37 +47,11 @@ namespace TuneHub.WebApp
             builder =>
             {
                 builder.AllowAnyMethod().AllowAnyHeader()
-                    .WithOrigins("http://localhost:5000")
+                    .WithOrigins("http://localhost:5001")
                     .AllowCredentials();
             }));
 
-            services.AddSignalR();
-            services.AddFluentSpotifyClient(
-                clientBuilder => clientBuilder.ConfigurePipeline(
-                    pipeline => pipeline.AddAspNetCoreAuthorizationCodeFlow(
-                        spotifyAuthenticationScheme: SpotifyAuthenticationScheme
-                    )));
-                
-                    
-            
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(
-                    options =>
-                    {
-                        options.LoginPath = new PathString("/login");
-                        options.LogoutPath = new PathString("/logout");
-                    })
-                .AddSpotify(
-                    SpotifyAuthenticationScheme,
-                    options =>
-                    {
-                        options.ClientId = Configuration["Authorization:Spotify:ClientId"];
-                        options.ClientSecret = Configuration["Authorization:Spotify:ClientSecret"];
-                        options.Scope.Add("playlist-read-private");
-                        options.Scope.Add("playlist-read-collaborative");
-                        options.SaveTokens = true;
-                    });
-                
+            services.AddTuneHubAuthentication(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
