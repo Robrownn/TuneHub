@@ -9,18 +9,15 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using FluentSpotifyApi.AuthorizationFlows.AspNetCore.AuthorizationCode.Extensions;
-using FluentSpotifyApi.AuthorizationFlows.AspNetCore.AuthorizationCode.Handler;
-using FluentSpotifyApi.Extensions;
 using TuneHub.WebApp.Hubs;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
+using AspNet.Security.OAuth.Spotify;
 
 namespace TuneHub.WebApp
 {
     public class Startup
     {
-        private const string SpotifyAuthenticationScheme = SpotifyDefaults.AuthenticationScheme;
 
         public Startup(IConfiguration configuration)
         {
@@ -74,8 +71,6 @@ namespace TuneHub.WebApp
             app.UseAuthentication();
 
             app.UseSpotifyClientAuthentication();
-
-            app.UseSpotifyInvalidRefreshTokenExceptionHandler("/login");
             app.UseSignalR(routes =>
             {
                 routes.MapHub<ChatHub>("/chatHub");

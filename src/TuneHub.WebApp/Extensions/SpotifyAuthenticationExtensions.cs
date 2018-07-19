@@ -1,11 +1,10 @@
-using FluentSpotifyApi.AuthorizationFlows.AspNetCore.AuthorizationCode.Handler;
+using AspNet.Security.OAuth.Spotify;
 using Microsoft.AspNetCore.Authentication;
 
 namespace Microsoft.AspNetCore.Builder
 {
     public static class SpotifyAuthenticationExtensions
     {
-        private const string SpotifyAuthenticationScheme = SpotifyDefaults.AuthenticationScheme;
         public static IApplicationBuilder UseSpotifyClientAuthentication(this IApplicationBuilder app)
         {
             // Map the login path to challenge the user with their Spotify Credentials
@@ -17,7 +16,7 @@ namespace Microsoft.AspNetCore.Builder
                         async context =>
                         {
                             await context.ChallengeAsync(
-                                SpotifyAuthenticationScheme,
+                                SpotifyAuthenticationDefaults.AuthenticationScheme,
                                 properties: new AuthenticationProperties()
                                 {
                                     RedirectUri = "/",
