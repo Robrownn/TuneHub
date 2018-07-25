@@ -1,5 +1,9 @@
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using AspNet.Security.OAuth.Spotify;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 
@@ -41,6 +45,23 @@ namespace Microsoft.Extensions.DependencyInjection
                         options.Scope.Add("playlist-modify-public");
                         options.Scope.Add("streaming");
                         options.SaveTokens = true;
+                        options.Events = new OAuthEvents
+                        {
+                            OnTicketReceived = context =>
+                            {
+                                var claimsIdentity = (ClaimsIdentity) context.Principal.Identity;
+
+                                // Add access token to user claims
+                                claimsIdentity.AddClaim(new Claim("access_token",
+                                    context.Properties.Items.FirstOrDefault(p => p.Key == ".Token.access_token").Value));
+
+                                // Add refresh token to user claims
+                                claimsIdentity.AddClaim(new Claim("refresh_token",
+                                    context.Properties.Items.FirstOrDefault(p => p.Key == ".Token.refresh_token").Value));
+
+                                return Task.CompletedTask;
+                            }
+                        };
                     }
                 );
 
