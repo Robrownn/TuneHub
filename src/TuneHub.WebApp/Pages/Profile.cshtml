@@ -7,19 +7,13 @@
         <th>Name</th>
         <th>Owner</th>
         <th class="text-right">No. of Tracks</th>
-        <th>Is Public</th>
-        <th>Is Collaborative</th>
-        <th>Is Owned</th>
     </tr>
-    @foreach (var item in Model.Playlists)
+    @foreach (var item in Model.Playlists.List)
     {
         <tr>
             <td>@item.Name</td>
             <td>@item.Owner</td>
-            <td>@item.NumberOfTracks</td>
-            <td>@item.IsPublic</td>
-            <td>@item.IsCollaborative</td>
-            <td>@item.IsOwned</td>
+            <td>@item.Tracks.Total</td>
         </tr>
     }
 </table>

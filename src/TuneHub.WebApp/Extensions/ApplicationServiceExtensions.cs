@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -6,6 +7,9 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using TuneHub.WebApp.Services;
+using TuneHub.WebApp.Services.Clients;
+using TuneHub.WebApp.Services.Interfaces;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -18,6 +22,11 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         public static IServiceCollection AddTuneHubServices(this IServiceCollection services)
         {
+            services.AddHttpClient<SpotifyClient>(options =>
+            {
+                options.BaseAddress =  new Uri("https://api.spotify.com/v1/");
+            });
+            services.AddScoped<ISpotifyPlaylistService, SpotifyPlaylistService>();
             services.AddSignalR();
             return services;
         }

@@ -36,6 +36,7 @@ namespace TuneHub.WebApp
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.AddTuneHubAuthentication(Configuration);
             services.AddTuneHubServices();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
@@ -47,8 +48,6 @@ namespace TuneHub.WebApp
                     .WithOrigins("http://localhost:5001")
                     .AllowCredentials();
             }));
-
-            services.AddTuneHubAuthentication(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

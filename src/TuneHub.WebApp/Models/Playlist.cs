@@ -1,28 +1,48 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace TuneHub.WebApp.Models
 {
     public class Playlist
     {
-        [Display(Name = "ID")]
-        public string ID { get; set; }
+        [JsonProperty("collaborative")]
+        public bool IsCollaborative { get; set; }
 
-        [Display(Name = "Name")]
+        [JsonProperty("href")]
+        public string Link { get; set; }
+
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
+        [JsonProperty("images")]
+        public IEnumerable<Image> Images { get; set; }
+
+        [JsonProperty("name")]
         public string Name { get; set; }
 
-        [Display(Name = "Owner")]
-        public string Owner { get; set; }
+        [JsonProperty("owner")]
+        public SpotifyUser Owner { get; set; }
 
-        [Display(Name = "No. of tracks")]
-        public int NumberOfTracks { get; set; }
-
-        [Display(Name = "Is Public")]
+        [JsonProperty("public")]
         public bool? IsPublic { get; set; }
-        
-        [Display(Name = "Is Collaborative")]
-        public bool IsCollaborative { get; set; }
-        
-        [Display(Name = "Is Owned")]
-        public bool IsOwned { get; set; }
+
+        [JsonProperty("snapshot_id")]
+        public string SnapshotId { get; set; }
+
+        [JsonProperty("tracks")]
+        public Tracks Tracks { get; set; }
+
+        [JsonProperty("type")]
+        public string Type { get; set; }
+
+        [JsonProperty("uri")]
+        public string SpotifyUri { get; set; }
+    }
+
+    public class Playlists
+    {
+        [JsonProperty("items")]
+        public IEnumerable<Playlist> List { get; set; }
     }
 }
