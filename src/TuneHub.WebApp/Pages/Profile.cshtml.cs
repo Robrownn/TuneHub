@@ -12,19 +12,26 @@ namespace TuneHub.WebApp.Pages
     public class ProfileModel : PageModel
     {
         private readonly ISpotifyPlaylistService _spotifyPlaylists;
+        private readonly ISpotifyUserService _spotifyUsers;
 
-        public ProfileModel(ISpotifyPlaylistService spotifyPlaylists)
+        public ProfileModel(ISpotifyPlaylistService spotifyPlaylists,
+                            ISpotifyUserService spotifyUsers)
         {
             _spotifyPlaylists = spotifyPlaylists;
+            _spotifyUsers = spotifyUsers;
         }
 
         [BindProperty]
         public Playlists Playlists { get; set; }
 
+        [BindProperty]
+        public SpotifyUser Me { get; set; }
+
         [Authorize]
         public async Task OnGet()
         {
             Playlists = await _spotifyPlaylists.GetPlaylistsAsync();
+            Me = await _spotifyUsers.GetUserProfileAsync();
         }
     }
 }

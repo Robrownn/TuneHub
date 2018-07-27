@@ -10,14 +10,14 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TuneHub.WebApp.Models;
-using TuneHub.WebApp.Services.Clients.Interfaces;
 
 namespace TuneHub.WebApp.Services.Clients
 {
-    public class SpotifyClient : ISpotifyClient
+    public class SpotifyClient
     {
         private readonly HttpClient _client;
         private readonly IHttpContextAccessor _context;
+
         private readonly IConfiguration _config;
 
         public SpotifyClient(HttpClient client, IHttpContextAccessor context, IConfiguration config)
@@ -34,9 +34,12 @@ namespace TuneHub.WebApp.Services.Clients
 
         public async Task<string> GetUserPlaylistsAsync()
         {
-            return await _client.GetStringAsync($"me/playlists");
+            return await _client.GetStringAsync("me/playlists");
         }
 
-
+        public async Task<string> GetUserProfileAsync()
+        {
+            return await _client.GetStringAsync("me");
+        }
     }
 }

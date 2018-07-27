@@ -27,6 +27,7 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 options.BaseAddress =  new Uri("https://api.spotify.com/v1/");
             });
+            services.AddScoped<ISpotifyUserService, SpotifyUserService>();
             services.AddScoped<ISpotifyPlaylistService, SpotifyPlaylistService>();
             services.AddSignalR();
             return services;

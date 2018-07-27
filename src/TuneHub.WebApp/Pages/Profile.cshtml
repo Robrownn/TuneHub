@@ -1,19 +1,31 @@
 @page
 @model TuneHub.WebApp.Pages.ProfileModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using System.Linq;
 
-<table class="table table-striped">
-    <tr>
-        <th>Name</th>
-        <th>Owner</th>
-        <th class="text-right">No. of Tracks</th>
-    </tr>
-    @foreach (var item in Model.Playlists.List)
-    {
-        <tr>
-            <td>@item.Name</td>
-            <td>@item.Owner.Name</td>
-            <td class="text-right">@item.Tracks.Total</td>
-        </tr>
-    }
-</table>
+<div class="panel panel-default">
+    <div class="col-md-3 panel panel-body">
+        <img src=@Model.Me.Images.FirstOrDefault()?.SourceUrl alt="">
+        <p class="text-center">@Model.Me.Name</p>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="col-md-9 panel panel-body">
+        <table class="table table-striped">
+            <tr>
+                <th>Name</th>
+                <th>Owner</th>
+                <th class="text-right">No. of Tracks</th>
+            </tr>
+            @foreach (var item in Model.Playlists.List)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Owner.Name</td>
+                    <td class="text-right">@item.Tracks.Total</td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
