@@ -22,6 +22,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         public static IServiceCollection AddTuneHubServices(this IServiceCollection services)
         {
+            services.AddHttpContextAccessor();
             services.AddHttpClient<SpotifyClient>(options =>
             {
                 options.BaseAddress =  new Uri("https://api.spotify.com/v1/");

@@ -17,10 +17,13 @@ namespace TuneHub.WebApp.Services
 
         public async Task<Playlists> GetPlaylistsAsync()
         {
-            var getPlaylists = await _client.GetUserPlaylistsAsync();
-            Playlists playlists = JsonConvert.DeserializeObject<Playlists>(getPlaylists);
+            var playlists = await _client.GetUserPlaylistsAsync();
+            JsonSerializerSettings settings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            };
 
-            return playlists;
+            return JsonConvert.DeserializeObject<Playlists>(playlists, settings);
         }
     }
 }

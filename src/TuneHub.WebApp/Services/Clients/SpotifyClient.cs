@@ -34,7 +34,7 @@ namespace TuneHub.WebApp.Services.Clients
 
         public async Task<string> GetUserPlaylistsAsync()
         {
-            return await _client.GetStringAsync($"users/me/playlists");
+            return await _client.GetStringAsync($"me/playlists");
         }
 
 
