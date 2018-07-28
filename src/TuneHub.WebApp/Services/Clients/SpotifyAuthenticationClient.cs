@@ -42,28 +42,12 @@ namespace TuneHub.WebApp.Services.Clients
             };
 
             var response = await _client.PostAsJsonAsync("token", postData);
-            var responseObject = JsonConvert.DeserializeObject<RefreshToken>(response.Content.ToString());
-            return responseObject.AccessToken;
+            return response.Content.ToString();
         }
 
         private string GetUserRefreshToken()
         {
             return _context.HttpContext.User.Claims.FirstOrDefault(claim => claim.Type == "refresh_token")?.Value;
-        }
-
-        struct RefreshToken
-        {
-            [JsonProperty("access_token")]
-            public string AccessToken { get; set; }
-
-            [JsonProperty("token_type")]
-            public string TokenType { get; set; }
-
-            [JsonProperty("scope")]
-            public string Scope { get; set; }
-
-            [JsonProperty("expires_in")]
-            public int ExpiresIn { get; set; }
         }
     }
 

@@ -74,6 +74,10 @@ namespace Microsoft.Extensions.DependencyInjection
                                 claimsIdentity.AddClaim(new Claim("refresh_token",
                                     context.Properties.Items.FirstOrDefault(p => p.Key == ".Token.refresh_token").Value));
 
+                                // Specify expiry time
+                                claimsIdentity.AddClaim(new Claim("expires_at",
+                                    context.Properties.Items.FirstOrDefault(p => p.Key == ".Token.expires_at").Value));
+
                                 return Task.CompletedTask;
                             }
                         };

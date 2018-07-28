@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -15,13 +16,15 @@ namespace TuneHub.WebApp.Services.Clients
 {
     public class SpotifyClient
     {
+        private readonly SpotifyAuthenticationClient _authClient;
         private readonly HttpClient _client;
         private readonly IHttpContextAccessor _context;
-
         private readonly IConfiguration _config;
 
-        public SpotifyClient(HttpClient client, IHttpContextAccessor context, IConfiguration config)
+        public SpotifyClient(HttpClient client, IHttpContextAccessor context, 
+                             IConfiguration config, SpotifyAuthenticationClient authClient)
         {
+            _authClient = authClient;
             _client = client;
             _context = context;
             _config = config;
@@ -34,12 +37,52 @@ namespace TuneHub.WebApp.Services.Clients
 
         public async Task<string> GetUserPlaylistsAsync()
         {
+            if (IsTokenExpired())
+            {
+                UpdateAccessTokenAsync();
+            }
+                
             return await _client.GetStringAsync("me/playlists");
         }
 
         public async Task<string> GetUserProfileAsync()
         {
+            if (IsTokenExpired())
+            {
+                UpdateAccessTokenAsync();
+            }
+
             return await _client.GetStringAsync("me");
         }
+
+        #region Helpers
+        private void UpdateAuthClaims(ClaimsIdentity claimsIdentity, RefreshToken refreshedToken)
+        {
+            claimsIdentity.RemoveClaim(claimsIdentity.FindFirst("access_token"));
+            claimsIdentity.AddClaim(new Claim("access_token", refreshedToken.AccessToken));
+
+            claimsIdentity.RemoveClaim(claimsIdentity.FindFirst("expires_at"));
+            claimsIdentity.AddClaim(new Claim("expires_at", DateTime.Now.AddSeconds(refreshedToken.ExpiresIn).ToString()));
+        }
+
+        private bool IsTokenExpired()
+        {
+            var expiryDate = Convert.ToDateTime(
+                _context.HttpContext.User.Claims.FirstOrDefault(claim => claim.Type == "expires_at")?.Value
+            ).AddMinutes(-1);
+
+            return (DateTime.Now > expiryDate);
+        }
+
+        private async void UpdateAccessTokenAsync()
+        {
+            var refreshedToken = JsonConvert.DeserializeObject<RefreshToken>(await _authClient.GetRefreshedAccessTokenAsync());
+            var claimsIdentity = (ClaimsIdentity) _context.HttpContext.User.Identity;
+            UpdateAuthClaims(claimsIdentity, refreshedToken);
+
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", refreshedToken.AccessToken);
+        }
+        #endregion
+
     }
 }
