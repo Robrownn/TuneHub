@@ -3,15 +3,20 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @using System.Linq;
 
-<div class="panel panel-default">
-    <div class="col-md-3 panel panel-body">
+<div class="col-md-3 panel panel-default">
+    <div class="panel panel-body">
         <img src=@Model.Me.Images.FirstOrDefault()?.SourceUrl alt="">
-        <p class="text-center">@Model.Me.Name</p>
+        <p>@Model.Me.Name</p>
+    </div>
+    <div class="panel panel-body">
+        <ul class="nav nav-pills nav-stacked">
+            <li class="nav nav-pills">My Rooms</li>
+        </ul>
     </div>
 </div>
 
-<div class="panel panel-default">
-    <div class="col-md-9 panel panel-body">
+<div class="col-md-9 panel panel-default">
+    <div class="panel panel-body">
         <table class="table table-striped">
             <tr>
                 <th>Name</th>
