@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -35,14 +36,26 @@ namespace TuneHub.WebApp.Services.Clients
         public async Task<string> GetRefreshedAccessTokenAsync()
         {
             var refreshToken = GetUserRefreshToken();
-            var postData = new JObject
-            {
-                new JProperty("grant_type", "refresh_token"),
-                new JProperty("refresh_token", refreshToken)
-            };
+            var postData = CreateRefreshTokenRequestMessage(refreshToken);
 
-            var response = await _client.PostAsJsonAsync("token", postData);
-            return response.Content.ToString();
+            using (var content = new FormUrlEncodedContent(postData))
+            {
+                content.Headers.Clear();
+                content.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
+
+                var response = await _client.PostAsync("token", content);
+                return await response.Content.ReadAsStringAsync();
+            }         
+            
+        }
+
+        private List<KeyValuePair<string,string>> CreateRefreshTokenRequestMessage(string refreshToken)
+        {
+            var postData = new List<KeyValuePair<string,string>>();
+            postData.Add(new KeyValuePair<string, string>("grant_type", "refresh_token"));
+            postData.Add(new KeyValuePair<string, string>("refresh_token", $"{refreshToken}"));
+
+            return postData;
         }
 
         private string GetUserRefreshToken()

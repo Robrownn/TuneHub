@@ -18,6 +18,10 @@ namespace TuneHub.WebApp.Services
         public async Task<Playlists> GetPlaylistsAsync()
         {
             var playlists = await _client.GetUserPlaylistsAsync();
+
+            if (playlists == null)
+                return null;
+
             JsonSerializerSettings settings = new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore

@@ -18,6 +18,10 @@ namespace TuneHub.WebApp.Services
         public async Task<SpotifyUser> GetUserProfileAsync()
         {
             var user = await _client.GetUserProfileAsync();
+
+            if (user == null)
+                return null;
+
             JsonSerializerSettings settings = new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore

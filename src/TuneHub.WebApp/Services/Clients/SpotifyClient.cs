@@ -39,7 +39,9 @@ namespace TuneHub.WebApp.Services.Clients
         {
             if (IsTokenExpired())
             {
-                UpdateAccessTokenAsync();
+                var isUpdated = await UpdateAccessTokenAsync();
+                if (!isUpdated)
+                    return null;
             }
                 
             return await _client.GetStringAsync("me/playlists");
@@ -49,20 +51,33 @@ namespace TuneHub.WebApp.Services.Clients
         {
             if (IsTokenExpired())
             {
-                UpdateAccessTokenAsync();
+                var isUpdated = await UpdateAccessTokenAsync();
+                if (!isUpdated)
+                    return null;
             }
 
             return await _client.GetStringAsync("me");
         }
 
         #region Helpers
-        private void UpdateAuthClaims(ClaimsIdentity claimsIdentity, RefreshToken refreshedToken)
+        private bool UpdateAuthClaims(RefreshToken refreshedToken)
         {
-            claimsIdentity.RemoveClaim(claimsIdentity.FindFirst("access_token"));
-            claimsIdentity.AddClaim(new Claim("access_token", refreshedToken.AccessToken));
+            var claimsIdentity = (ClaimsIdentity) _context.HttpContext.User.Identity;
+            try
+            {
+                claimsIdentity.RemoveClaim(claimsIdentity.FindFirst("access_token"));
+                claimsIdentity.AddClaim(new Claim("access_token", refreshedToken.AccessToken));
 
-            claimsIdentity.RemoveClaim(claimsIdentity.FindFirst("expires_at"));
-            claimsIdentity.AddClaim(new Claim("expires_at", DateTime.Now.AddSeconds(refreshedToken.ExpiresIn).ToString()));
+                claimsIdentity.RemoveClaim(claimsIdentity.FindFirst("expires_at"));
+                claimsIdentity.AddClaim(new Claim("expires_at", DateTime.Now.AddSeconds(refreshedToken.ExpiresIn).ToString()));
+
+                return true;
+            }
+            catch (System.Exception)
+            {            
+                return false;
+            }
+            
         }
 
         private bool IsTokenExpired()
@@ -74,13 +89,18 @@ namespace TuneHub.WebApp.Services.Clients
             return (DateTime.Now > expiryDate);
         }
 
-        private async void UpdateAccessTokenAsync()
+        private async Task<bool> UpdateAccessTokenAsync()
         {
             var refreshedToken = JsonConvert.DeserializeObject<RefreshToken>(await _authClient.GetRefreshedAccessTokenAsync());
-            var claimsIdentity = (ClaimsIdentity) _context.HttpContext.User.Identity;
-            UpdateAuthClaims(claimsIdentity, refreshedToken);
+            var success = UpdateAuthClaims(refreshedToken);
 
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", refreshedToken.AccessToken);
+            if (success) 
+            {
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", refreshedToken.AccessToken);
+                return true;
+            }
+
+            return false;
         }
         #endregion
 
