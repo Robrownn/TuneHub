@@ -31,52 +31,33 @@ namespace TuneHub.WebApp.Services.Clients
 
             // Grab the access token and use it as the default request header for authentication
             // Thanks to Volvox.Helios for this: https://github.com/BillChirico/Volvox.Helios/blob/afbee5a9216e3a531a9fe3fbb85ca1f70a0710c3/src/Volvox.Helios.Service/Clients/DiscordAPIClient.cs#L24-L25
+            if (IsTokenExpired())
+                Task.Run(() => this.UpdateAccessToken()).Wait();
+            
             var accessToken = context.HttpContext.User.Claims.FirstOrDefault(claim => claim.Type == "access_token")?.Value;
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
         }
 
         public async Task<string> GetUserPlaylistsAsync()
         {
-            if (IsTokenExpired())
-            {
-                var isUpdated = await UpdateAccessTokenAsync();
-                if (!isUpdated)
-                    return null;
-            }
-                
             return await _client.GetStringAsync("me/playlists");
         }
 
         public async Task<string> GetUserProfileAsync()
         {
-            if (IsTokenExpired())
-            {
-                var isUpdated = await UpdateAccessTokenAsync();
-                if (!isUpdated)
-                    return null;
-            }
-
             return await _client.GetStringAsync("me");
         }
 
         #region Helpers
-        private bool UpdateAuthClaims(RefreshToken refreshedToken)
+        private void UpdateAuthClaims(RefreshToken refreshedToken)
         {
             var claimsIdentity = (ClaimsIdentity) _context.HttpContext.User.Identity;
-            try
-            {
-                claimsIdentity.RemoveClaim(claimsIdentity.FindFirst("access_token"));
-                claimsIdentity.AddClaim(new Claim("access_token", refreshedToken.AccessToken));
 
-                claimsIdentity.RemoveClaim(claimsIdentity.FindFirst("expires_at"));
-                claimsIdentity.AddClaim(new Claim("expires_at", DateTime.Now.AddSeconds(refreshedToken.ExpiresIn).ToString()));
+            claimsIdentity.RemoveClaim(claimsIdentity.FindFirst("access_token"));
+            claimsIdentity.AddClaim(new Claim("access_token", refreshedToken.AccessToken));
 
-                return true;
-            }
-            catch (System.Exception)
-            {            
-                return false;
-            }
+            claimsIdentity.RemoveClaim(claimsIdentity.FindFirst("expires_at"));
+            claimsIdentity.AddClaim(new Claim("expires_at", DateTime.Now.AddSeconds(refreshedToken.ExpiresIn).ToString()));
             
         }
 
@@ -89,18 +70,10 @@ namespace TuneHub.WebApp.Services.Clients
             return (DateTime.Now > expiryDate);
         }
 
-        private async Task<bool> UpdateAccessTokenAsync()
+        private async Task UpdateAccessToken()
         {
             var refreshedToken = JsonConvert.DeserializeObject<RefreshToken>(await _authClient.GetRefreshedAccessTokenAsync());
-            var success = UpdateAuthClaims(refreshedToken);
-
-            if (success) 
-            {
-                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", refreshedToken.AccessToken);
-                return true;
-            }
-
-            return false;
+            UpdateAuthClaims(refreshedToken);
         }
         #endregion
 
