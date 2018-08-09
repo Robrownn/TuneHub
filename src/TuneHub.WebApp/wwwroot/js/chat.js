@@ -13,7 +13,7 @@ connection.on("RecieveMessage", (user, message) => {
 connection.start().catch(err => console.error(err.toString()));
 
 document.getElementById("sendButton").addEventListener("click", event => {
-    const user = document.getElementById("userInput").value;
+    const user = document.getElementById("username").textContent;
     const message = document.getElementById("messageInput").value;
     connection.invoke("SendMessage", user, message).catch(err => console.error(err.toString()));
     event.preventDefault();

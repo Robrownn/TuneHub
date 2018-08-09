@@ -39,7 +39,7 @@
                 <ul class="nav navbar-nav pull-right">
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <li><a asp-page="Profile">Hello @User.Identity.Name!</a></li>
+                        <li><a asp-page="Profile">Hello <span id="username">@User.Identity.Name</span>!</a></li>
                         <li><a href="~/logout">Log Out</a></li>
                     }
                     else
