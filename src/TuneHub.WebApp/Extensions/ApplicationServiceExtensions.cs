@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using TuneHub.WebApp.Models.Spotify;
 using TuneHub.WebApp.Services;
 using TuneHub.WebApp.Services.Clients;
 using TuneHub.WebApp.Services.Interfaces;
@@ -20,12 +21,12 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// Adds all the services specific to TuneHub.
         /// </summary>
-        public static IServiceCollection AddTuneHubServices(this IServiceCollection services)
+        public static IServiceCollection AddTuneHubServices(this IServiceCollection services, IConfiguration Configuration)
         {
             services.AddHttpContextAccessor();
             services.AddHttpClient<SpotifyClient>(options =>
             {
-                options.BaseAddress =  new Uri("https://api.spotify.com/v1/");
+                options.BaseAddress = new Uri("https://api.spotify.com/v1/");
             });
             services.AddHttpClient<SpotifyAuthenticationClient>(options =>
             {
@@ -33,6 +34,9 @@ namespace Microsoft.Extensions.DependencyInjection
             });
             services.AddScoped<ISpotifyUserService, SpotifyUserService>();
             services.AddScoped<ISpotifyPlaylistService, SpotifyPlaylistService>();
+
+            services.Configure<SpotifySettings>(options => options.ApiKey = Configuration["Spotify:WebApiKey"]);
+
             services.AddSignalR();
             return services;
         }
