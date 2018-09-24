@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 
@@ -5,9 +6,52 @@ namespace TuneHub.WebApp.Hubs
 {
     public class ChatHub : Hub
     {
-        public async Task SendMessage(string user, string message)
+        public void  BroadcastMessage(string name, string message)
         {
-            await Clients.All.SendAsync("RecieveMessage", user, message);
+            Clients.All.SendAsync("broadcastMessage", name, message);
+        }
+
+        public void Echo(string name, string message)
+        {
+            Clients.Client(Context.ConnectionId).SendAsync("echo", name, message + " (echo from your server)");
+        }
+
+        public async void JoinGroup(string name, string groupName)
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+            await Clients.Group(groupName).SendAsync("echo", "_SYSTEM_", $"{name} joined {groupName} with connectionId {Context.ConnectionId}");
+        }
+
+        public async void LeaveGroup(string name, string groupName)
+        {
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
+            await Clients.Client(Context.ConnectionId).SendAsync("echo", "_SYSTEM_", $"{name} left {groupName}");
+            await Clients.Group(groupName).SendAsync("echo", "_SYSTEM_", $"{name} left {groupName}");
+        }
+
+        public void SendGroup(string name, string groupName, string message)
+        {
+            Clients.Group(groupName).SendAsync("echo", name, message);
+        }
+
+        public void SendGroups(string name, IReadOnlyList<string> groups, string message)
+        {
+            Clients.Groups(groups).SendAsync("echo", name, message);
+        }
+
+        public void SendGroupExcept(string name, string groupName, IReadOnlyList<string> connectionIdExcept, string message)
+        {
+            Clients.GroupExcept(groupName, connectionIdExcept).SendAsync("echo", name, message);
+        }
+
+        public void SendUser(string name, string userId, string message)
+        {
+            Clients.User(userId).SendAsync("echo", name, message);
+        }
+
+        public void SendUsers(string name, IReadOnlyList<string> userIds, string message)
+        {
+            Clients.Users(userIds).SendAsync("echo", name, message);
         }
     }
 }
