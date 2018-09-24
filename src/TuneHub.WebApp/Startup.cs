@@ -13,7 +13,6 @@ using TuneHub.WebApp.Hubs;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using AspNet.Security.OAuth.Spotify;
-using TuneHub.WebApp.Models.Spotify;
 
 namespace TuneHub.WebApp
 {

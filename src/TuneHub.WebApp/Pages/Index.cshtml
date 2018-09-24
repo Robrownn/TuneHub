@@ -1,7 +1,5 @@
 ﻿@page
-@using Microsoft.Extensions.Options
-@using TuneHub.WebApp.Models.Spotify;
-@inject IOptions<SpotifySettings> Spotify
+@model TuneHub.WebApp.Pages.IndexModel
 <div class="container">
     <div class="row">&nbsp;</div>
     <div class="row">
@@ -28,7 +26,7 @@
 <script src="https://sdk.scdn.co/spotify-player.js"></script>
 <script>
     window.onSpotifyWebPlaybackSDKReady = () => {
-        const token = '@Spotify.Value.ApiKey';
+        const token = '@Model.ApiKey';
         const player = new Spotify.Player({
             name: 'Web Playback SDK Quick Start Player',
             getOAuthToken: cb => { cb(token); }

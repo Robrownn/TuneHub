@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
-using TuneHub.WebApp.Models.Spotify;
 using TuneHub.WebApp.Services;
 using TuneHub.WebApp.Services.Clients;
 using TuneHub.WebApp.Services.Interfaces;
@@ -35,8 +34,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<ISpotifyUserService, SpotifyUserService>();
             services.AddScoped<ISpotifyPlaylistService, SpotifyPlaylistService>();
 
-            services.Configure<SpotifySettings>(options => options.ApiKey = Configuration["Spotify:WebApiKey"]);
-
             services.AddSignalR();
             return services;
         }
@@ -63,6 +60,9 @@ namespace Microsoft.Extensions.DependencyInjection
                         options.Scope.Add("playlist-read-collaborative");
                         options.Scope.Add("playlist-modify-public");
                         options.Scope.Add("streaming");
+                        options.Scope.Add("user-read-birthdate");
+                        options.Scope.Add("user-read-email");
+                        options.Scope.Add("user-read-private");
                         options.SaveTokens = true;
                         options.Events = new OAuthEvents
                         {
