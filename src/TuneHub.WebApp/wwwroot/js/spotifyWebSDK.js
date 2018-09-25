@@ -9,7 +9,7 @@ var WebPlayer = WebPlayer || (function() {
             window.onSpotifyWebPlaybackSDKReady = () => {
                 const token = _key;
                 const player = new Spotify.Player({
-                    name: 'Web Playback SDK Quick Start Player',
+                    name: 'TuneHub',
                     getOAuthToken: cb => { cb(token); }
                 });
             
