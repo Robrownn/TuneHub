@@ -25,4 +25,8 @@
 <script src="~/js/chat.js"></script>
 <script src="https://sdk.scdn.co/spotify-player.js"></script>
 <script src="~/js/spotifyWebSDK.js"></script>
+<script type="text/javascript">
+    WebPlayer.init("@Model.ApiKey");
+    WebPlayer.start();
+</script>
 @*<script src="~/js/es5-chat.js"></script>*@
