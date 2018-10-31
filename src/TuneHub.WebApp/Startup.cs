@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNet.Security.OAuth.Spotify;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -10,9 +13,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TuneHub.WebApp.Hubs;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
-using AspNet.Security.OAuth.Spotify;
 
 namespace TuneHub.WebApp
 {
@@ -42,12 +42,12 @@ namespace TuneHub.WebApp
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddCors(options => options.AddPolicy("CorsPolicy",
-            builder =>
-            {
-                builder.AllowAnyMethod().AllowAnyHeader()
-                    .WithOrigins("http://localhost:5001")
-                    .AllowCredentials();
-            }));
+                builder =>
+                {
+                    builder.AllowAnyMethod().AllowAnyHeader()
+                        .WithOrigins("http://localhost:5001")
+                        .AllowCredentials();
+                }));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
